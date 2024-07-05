@@ -23,7 +23,7 @@ function Dashboard() {
 
     const fetchPortfolio = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/portfolio/receive');
+            const response = await axios.get('https://anshul-portfolio-admin-be.onrender.com/portfolio/receive');
             const data = response.data;
 
             if (data) {
@@ -109,7 +109,7 @@ function Dashboard() {
 
     //         console.log('Sending portfolio data:', portfolioData);
 
-    //         const response = await axios.post('http://localhost:3001/portfolio/upload', portfolioData, {
+    //         const response = await axios.post('https://anshul-portfolio-admin-be.onrender.com/portfolio/upload', portfolioData, {
     //             headers: {
     //                 'auth-token': localStorage.getItem('auth-token')
     //             }
@@ -370,7 +370,7 @@ function Dashboard() {
                 if (item._id) {
                     console.log('put');
                     // If the item has an _id, it's an existing item and should be updated
-                    await axios.put(`http://localhost:3001/portfolio/${sectionName}/${item._id}`, item);
+                    await axios.put(`https://anshul-portfolio-admin-be.onrender.com/portfolio/${sectionName}/${item._id}`, item);
                 } else {
                     // New entry, use POST
                     console.log('post');
@@ -380,7 +380,7 @@ function Dashboard() {
                         portfolioId: { _id }, // Replace with actual portfolio ID
                         [sectionName.slice(0, -1)]: item
                     };
-                    await axios.post(`http://localhost:3001/portfolio/upload/${sectionName}`, newItem);
+                    await axios.post(`https://anshul-portfolio-admin-be.onrender.com/portfolio/upload/${sectionName}`, newItem);
                 }
             } catch (error) {
                 console.error(`Error saving ${sectionName}`, error);
