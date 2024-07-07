@@ -392,17 +392,17 @@ function Dashboard() {
     return (
         <form onSubmit={handleSubmit} method='POST' className='relative'>
 
-            <header className="text-gray-600 body-font fixed top-0 w-full h-16 bg-white">
-                <div className="container mx-auto flex flex-wrap px-5 flex-col h-full md:flex-row items-center">
-                    <a className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0" href="/">
+            <header className="text-gray-600 body-font fixed top-0 w-full h-16 bg-white z-10">
+                <div className="container mx-auto flex lg:px-5 px-2 h-full justify-evenly items-center">
+                    <div className="flex title-font font-medium items-center text-gray-900">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full" viewBox="0 0 24 24">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                         </svg>
-                        <span className="ml-3 text-xl">Anshul Resume</span>
-                    </a>
+                        <span className="lg:ml-3 ml-1 lg:text-xl text-base">Anshul Resume</span>
+                    </div>
 
                     <button
-                        className="inline-flex ml-auto items-center text-white border-0 py-1 px-3 focus:outline-none hover:bg-indigo-500 rounded text-base mt-4 md:mt-0 bg-indigo-700"
+                        className="inline-flex md:ml-auto items-center text-white border-0 py-1 lg:px-3 px-1 focus:outline-none hover:bg-indigo-500 rounded text-base bg-indigo-700"
                         type='button' onClick={logout} 
                     >
                         Logout
@@ -411,7 +411,7 @@ function Dashboard() {
                         </svg>
                     </button>
                     <button
-                        className="inline-flex ml-2 items-center text-white border-0 py-1 px-3 focus:outline-none hover:bg-indigo-500 rounded text-base mt-4 md:mt-0 bg-indigo-700"
+                        className="inline-flex lg:ml-2 items-center text-white border-0 py-1 lg:px-3 px-1 focus:outline-none hover:bg-indigo-500 rounded text-base bg-indigo-700"
                         type="submit"  // Add type="submit" to trigger form submission
                     >
                         Submit
@@ -423,12 +423,12 @@ function Dashboard() {
                 </div>
             </header>
 
-            <main className="mx-auto max-w-screen md:max-w-[680px] lg:max-w-[1200px] w-[65%] px-3">
+            <main className="mx-auto max-w-screen md:max-w-[680px] lg:max-w-[1200px] lg:w-[65%] px-3">
 
                 <div className="w-full">
                     <div className='h-16 w-full'></div>
                     {/* User */}
-                    <div className="border-4 border-white rounded-xl transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
+                    <div className="border-4 border-white rounded-xl bg-gray-100 transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
                         <div className='flex justify-center md:block'>
                             <span className="bg-white w-fit h-fit p-2 flex justify-center items-center mt-5 rounded-xl">
                                 <p className="text-lg font-bold lg:text-2xl">Users</p>
@@ -499,16 +499,16 @@ function Dashboard() {
                     </div>
 
                     {/* Skills */}
-                    <div className="border-4 border-white rounded-xl transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
-                        <div className='flex justify-center md:block'>
+                    <div className="border-4 border-white rounded-xl bg-gray-100 transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
+                        <div className='flex justify-center'>
                             <span className="bg-white w-fit h-fit p-2 flex justify-center items-center mt-5 rounded-xl">
                                 <p className="text-lg font-bold lg:text-2xl">Skills</p>
                             </span>
                         </div>
                         <div className="lg:mt-10 w-full">
                             {skills.map((skill, skillIndex) => (
-                                <div className="flex mt-5 border border-white shadow-2xl p-4" key={`skill-${skill.id}`}>
-                                    <div className='w-full'>
+                                <div className="mt-5 flex w-full bg-slate-200 rounded-xl p-2" key={`skill-${skill.id}`}>
+                                    <div className='w-full flex flex-col'>
                                         <div className='flex flex-col my-3 w-full'>
                                             <label className='lg:text-2xl text-lg font-semibold lg:mb-3 mb-1'>Category</label>
                                             <input
@@ -517,7 +517,7 @@ function Dashboard() {
                                                 id={`category-input-${skill.id}`}
                                                 name='category'
                                                 placeholder='Category'
-                                                className="h-14 lg:h-16 max-w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
                                                 value={skill.category}
                                                 onChange={(e) => handleCategoryChange(skillIndex, e.target.value)}
                                             />
@@ -530,8 +530,11 @@ function Dashboard() {
                                                 <option value="Others">Others</option>
                                             </datalist>
                                         </div>
+
+
+
                                         {skill.tools.map((tool, toolIndex) => (
-                                            <div className='w-full flex shadow-2xl p-4 rounded-lg' key={`tool-${tool.id}`}>
+                                            <div className='flex items-center' key={`tool-${tool.id}`}>
                                                 <div className='flex flex-col my-3 w-full'>
                                                     <label className='lg:text-2xl text-lg font-semibold lg:mb-3 mb-1'>Name</label>
                                                     <input
@@ -540,7 +543,7 @@ function Dashboard() {
                                                         id={`tool-input-${tool.id}`}
                                                         name='tool'
                                                         placeholder='Tools'
-                                                        className="h-14 lg:h-16 max-w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                                        className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
                                                         value={tool.name}
                                                         onChange={(e) => handleToolChange(skillIndex, toolIndex, e.target.value)}
                                                     />
@@ -552,13 +555,13 @@ function Dashboard() {
                                                 </div>
                                                 <button
                                                     type="button"
-                                                    className="lg:ml-7 ml-5 shadow-xl rounded-2xl w-fit h-fit p-2"
+                                                    className="ml-2 shadow-xl rounded-2xl w-fit h-fit p-2"
                                                     onClick={() => removeToolField(skillIndex, tool.id)}
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                                    </svg> {/* remove */}
-                                                </button>
+                                                    </svg> 
+                                                </button> {/* remove */}
                                             </div>
                                         ))}
                                         <div className="mt-3 flex items-center pl-5">
@@ -569,20 +572,22 @@ function Dashboard() {
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                                </svg> {/* add */}
-                                            </button>
+                                                </svg> 
+                                            </button>{/* add */}
                                             <p className="ml-4 md:text-xl md:font-semibold lg:text-xl">Add another Name</p>
                                         </div>
+
+
                                     </div>
                                     <button
                                         type="button"
-                                        className="lg:ml-7 ml-5 shadow-xl rounded-2xl w-fit h-fit p-2"
+                                        className="lg:ml-7 shadow-xl rounded-2xl w-fit h-fit p-2"
                                         onClick={() => removeSkillField(skill.id)}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                        </svg> {/* remove */}
-                                    </button>
+                                        </svg> 
+                                    </button>{/* remove */}
                                 </div>
                             ))}
                             <div className="mt-9 flex items-center pl-5 mb-5">
@@ -601,15 +606,15 @@ function Dashboard() {
                     </div>
 
                     {/* Experiences */}
-                    <div className="border-4 border-white rounded-xl transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
-                        <div className='flex justify-center md:block'>
+                    <div className="border-4 border-white bg-gray-100 rounded-xl transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
+                        <div className='flex justify-center'>
                             <span className="bg-white w-fit h-fit p-2 flex justify-center items-center mt-5 rounded-xl">
                                 <p className="text-lg font-bold lg:text-2xl">Experiences</p>
                             </span>
                         </div>
                         <div className="lg:mt-10 w-full">
                             {experiences.map((experience) => (
-                                <div className="mt-5 flex w-full" key={`experience-${experience.id}`}>
+                                <div className="mt-5 flex w-full bg-gray-200 rounded-xl p-2" key={`experience-${experience.id}`}>
                                     <div className='w-full flex flex-col'>
 
                                         <div className='w-full flex flex-col my-2'>
@@ -695,6 +700,7 @@ function Dashboard() {
 
                                         <div className='w-full flex flex-col my-2'>
                                             <label className='text-2xl font-semibold my-2' htmlFor={`experience-skills-${experience.id}`}>Skills Used</label>
+                                            
                                             {experience.skills.map((skill) => (
                                                 <div key={`experience-skills-${skill.id}`} className='flex items-center my-2'>
                                                     <input
@@ -762,15 +768,15 @@ function Dashboard() {
                     </div>
 
                     {/* Educations */}
-                    <div className="border-4 border-white rounded-xl transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
-                        <div className='flex justify-center md:block'>
+                    <div className="border-4 border-white bg-gray-100 rounded-xl transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
+                        <div className='flex justify-center'>
                             <span className="bg-white w-fit h-fit p-2 flex justify-center items-center mt-5 rounded-xl">
                                 <p className="text-lg font-bold lg:text-2xl">Education</p>
                             </span>
                         </div>
                         <div className="lg:mt-10 w-full">
                             {educations.map((education, index) => (
-                                <div className="mt-5 flex w-full" key={`education-${education.id}`}>
+                                <div className="mt-5 flex w-full bg-gray-200 rounded-xl p-2" key={`education-${education.id}`}>
                                     <div className='w-full flex flex-col'>
 
                                         <div className='w-full flex flex-col my-2'>
@@ -783,7 +789,7 @@ function Dashboard() {
                                                 value={education.institute}
                                                 onChange={(e) => EDhandleChange(e, education.id)}
                                                 placeholder="Name of the Institute"
-                                                className="h-14 lg:h-16 border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
                                             />
                                         </div>
 
@@ -796,7 +802,7 @@ function Dashboard() {
                                                 data-id={education.id}
                                                 value={education.start}
                                                 onChange={(e) => EDhandleChange(e, education.id)}
-                                                className="h-14 lg:h-16 border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
                                             />
                                         </div>
 
@@ -809,7 +815,7 @@ function Dashboard() {
                                                 data-id={education.id}
                                                 value={education.end}
                                                 onChange={(e) => EDhandleChange(e, education.id)}
-                                                className="h-14 lg:h-16 border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
                                             />
                                         </div>
 
@@ -823,7 +829,7 @@ function Dashboard() {
                                                 value={education.grade}
                                                 onChange={(e) => EDhandleChange(e, education.id)}
                                                 placeholder="Grade"
-                                                className="h-14 lg:h-16 border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
                                             />
                                         </div>
 
@@ -868,7 +874,7 @@ function Dashboard() {
                     </div>
 
                     {/* Projects */}
-                    <div className="border-4 border-white rounded-xl transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
+                    <div className="border-4 border-white bg-gray-100 rounded-xl transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
                         <div className='flex justify-center md:block'>
                             <span className="bg-white w-fit h-fit p-2 flex justify-center items-center mt-5 rounded-xl">
                                 <p className="text-lg font-bold lg:text-2xl">Projects</p>
@@ -876,7 +882,7 @@ function Dashboard() {
                         </div>
                         <div className="lg:mt-10 w-full">
                             {projects.map((project, index) => (
-                                <div className="mt-5 flex" key={`project-${project.id}`}>
+                                <div className="mt-5 flex bg-gray-200 rounded-xl p-2" key={`project-${project.id}`}>
                                     <div className='w-full flex flex-col'>
 
                                         <div className='w-full flex flex-col my-2'>
@@ -888,7 +894,7 @@ function Dashboard() {
                                                 value={project.name}
                                                 onChange={(e) => PhandleChange(e, project.id)}
                                                 placeholder="Project Name"
-                                                className="h-14 lg:h-16 border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
                                             />
                                         </div>
 
@@ -901,7 +907,7 @@ function Dashboard() {
                                                 value={project.description}
                                                 onChange={(e) => PhandleChange(e, project.id)}
                                                 placeholder="Project Description"
-                                                className="h-14 lg:h-16 border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
                                             />
                                         </div>
 
@@ -914,7 +920,7 @@ function Dashboard() {
                                                 value={project.link}
                                                 onChange={(e) => PhandleChange(e, project.id)}
                                                 placeholder="Project Link"
-                                                className="h-14 lg:h-16 border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
                                             />
                                         </div>
 
