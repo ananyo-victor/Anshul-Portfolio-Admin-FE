@@ -23,29 +23,35 @@ function Dashboard() {
 
     const fetchPortfolio = async () => {
         try {
-            const response = await axios.get('https://anshul-portfolio-admin-be.onrender.com/portfolio/receive');
+            // const response = await axios.get('https://anshul-portfolio-admin-be.onrender.com/portfolio/receive');
+            const response = await axios.get('http://localhost:3002/portfolio/receive');
             const data = response.data;
 
             if (data) {
-                console.log(data);
-                set_id(data[data.length - 1]._id);
-                setUsers(data[data.length - 1].users.map(user => ({
-                    id: user.id,
-                    name: user.name,
-                    resume: user.resume,
-                    github: user.github,
-                    photo: user.photo,
-                    _id: user._id
-                })));
-                setProjects(data[data.length - 1].projects.map(project => ({
+                // console.log(data);
+                // console.log(data[data.length - 1]._id);
+                const tempData = data[data.length - 1]
+                console.log(tempData);
+
+                set_id(tempData._id);
+                setUsers({
+                    _id: tempData.users._id,
+                    id: tempData.users.id,
+                    name: tempData.users.name,
+                    resume: tempData.users.resume,
+                    github: tempData.users.github,
+                    photo: tempData.users.photo,
+                });
+                setProjects(tempData.projects.map(project => ({
+                    _id: project._id,
                     id: project.id,
                     image: project.image,
                     name: project.name,
                     description: project.description,
                     link: project.link,
-                    _id: project._id
                 })));
-                setExperiences(data[data.length - 1].experiences.map(experience => ({
+                setExperiences(tempData.experiences.map(experience => ({
+                    _id: experience._id,
                     id: experience.id,
                     logo: experience.logo,
                     role: experience.role,
@@ -54,30 +60,29 @@ function Dashboard() {
                     end: experience.end,
                     description: experience.description,
                     skills: experience.skills.map(skill => ({
+                        _id: skill._id,
                         id: skill.id,
                         name: skill.name,
-                        _id: skill._id
                     })),
-                    _id: experience._id
                 })));
-                setEducations(data[data.length - 1].educations.map(education => ({
+                setEducations(tempData.educations.map(education => ({
+                    _id: education._id,
                     id: education.id,
                     institute: education.institute,
                     start: education.start,
                     end: education.end,
                     grade: education.grade,
                     description: education.description,
-                    _id: education._id
                 })));
-                setSkills(data[data.length - 1].skills.map(skill => ({
+                setSkills(tempData.skills.map(skill => ({
+                    _id: skill._id,
                     id: skill.id,
                     category: skill.category,
                     tools: skill.tools.map(tool => ({
+                        _id: tool._id,
                         id: tool.id,
                         name: tool.name,
-                        _id: tool._id
                     })),
-                    _id: skill._id
                 })));
             }
         } catch (error) {
@@ -246,13 +251,16 @@ function Dashboard() {
         setProjects(projects.filter(project => project.id !== projectId));
     };
 
-    const UhandleChange = (event, userId) => {
+    const UhandleChange = (event) => {
         const { name, value } = event.target;
-        const newUsers = users.map(user =>
-            user.id === userId ? { ...user, [name]: value } : user
-        );
-        setUsers(newUsers);
+
+        // Directly update the 'users' object
+        setUsers({
+            ...users,  // Spread the current 'users' object
+            [name]: value,  // Update the specific field by name
+        });
     };
+
 
     const frontendTools = [
         "HTML", "CSS", "JavaScript", "React", "Vue.js", "Angular", "Svelte", "Next.js", "Nuxt.js", "Gatsby", "Bootstrap", "Tailwind CSS", "Material-UI", "Ant Design", "Chakra UI",
@@ -349,7 +357,8 @@ function Dashboard() {
         //     // Update each section
         try {
             await Promise.all([
-                saveSection(users, 'users'),
+                // saveSection(users, 'users'),
+                saveUser(),
                 saveSection(projects, 'projects'),
                 saveSection(experiences, 'experiences'),
                 saveSection(educations, 'educations'),
@@ -363,28 +372,86 @@ function Dashboard() {
         }
     };
 
+    const saveUser = async () => {
+        try {
+            if (users._id) {
+                // If the user already has an _id, update the existing user
+                console.log('users put - ' + JSON.stringify(users));
+                console.log("user - " + users._id);
+
+                await axios.put(`http://localhost:3002/portfolio/users/${users._id}`, users);
+                // await axios.put(`https://anshul-portfolio-admin-be.onrender.com/portfolio/users/${users._id}`, users);
+            } else {
+                // If no _id, create a new user
+                console.log('users post');
+                const newUser = {
+                    portfolioId: { _id }, // Replace with actual portfolio ID
+                    user: users // Users is a single object
+                };
+                await axios.post(`http://localhost:3002/portfolio/upload/users`, newUser);
+                // await axios.post(`https://anshul-portfolio-admin-be.onrender.com/portfolio/upload/users`, newUser);
+            }
+        } catch (error) {
+            // Handle errors as necessary
+            if (error.response) {
+                console.error('Error Status:', error.response.status);
+                console.error('Error Data:', error.response.data);
+                console.error('Error Headers:', error.response.headers);
+            } else if (error.request) {
+                console.error('No response received:', error.request);
+            } else {
+                console.error('Error Message:', error.message);
+            }
+            console.error('Request Config:', error.config);
+        }
+    };
+
+
     const saveSection = async (sectionData, sectionName) => {
+        // console.log(sectionData);
+
         for (const item of sectionData) {
             try {
-                console.log(item);
+                // console.log(item);
                 if (item._id) {
-                    console.log('put');
+                    console.log(sectionName + ' put');
+                    // console.log(sectionData);
+                    console.log(JSON.stringify(item));
+                    console.log(item._id);
+
                     // If the item has an _id, it's an existing item and should be updated
-                    await axios.put(`https://anshul-portfolio-admin-be.onrender.com/portfolio/${sectionName}/${item._id}`, item);
+                    await axios.put(`http://localhost:3002/portfolio/${sectionName}/${item._id}`, item);
+                    // await axios.put(`https://anshul-portfolio-admin-be.onrender.com/portfolio/${sectionName}/${item._id}`, item);
                 } else {
-                    // New entry, use POST
-                    console.log('post');
-                    console.log(_id);
-                    console.log(sectionName.slice(0, -1));
+                    console.log(sectionName + ' post');
+                    // console.log(_id);    
+                    console.log(sectionData);
+
                     const newItem = {
                         portfolioId: { _id }, // Replace with actual portfolio ID
                         [sectionName.slice(0, -1)]: item
                     };
-                    await axios.post(`https://anshul-portfolio-admin-be.onrender.com/portfolio/upload/${sectionName}`, newItem);
+                    // console.log("new item here"+newItem);
+
+                    await axios.post(`http://localhost:3002/portfolio/upload/${sectionName}`, newItem);
+                    // await axios.post(`https://anshul-portfolio-admin-be.onrender.com/portfolio/upload/${sectionName}`, newItem);
                 }
             } catch (error) {
-                console.error(`Error saving ${sectionName}`, error);
-                throw error;
+                // console.error(`Error saving ${sectionName}`, error);
+                // throw error;
+                if (error.response) {
+                    // Server responded with a status other than 2xx
+                    console.error('Error Status:', error.response.status);
+                    console.error('Error Data:', error.response.data);
+                    console.error('Error Headers:', error.response.headers);
+                } else if (error.request) {
+                    // Request was made but no response was received
+                    console.error('No response received:', error.request);
+                } else {
+                    // Something happened in setting up the request
+                    console.error('Error Message:', error.message);
+                }
+                console.error('Request Config:', error.config);
             }
         }
     };
@@ -403,7 +470,7 @@ function Dashboard() {
 
                     <button
                         className="inline-flex md:ml-auto items-center text-white border-0 py-1 lg:px-3 px-1 focus:outline-none hover:bg-indigo-500 rounded text-base bg-indigo-700"
-                        type='button' onClick={logout} 
+                        type='button' onClick={logout}
                     >
                         Logout
                         <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4 ml-1" viewBox="0 0 24 24">
@@ -435,71 +502,71 @@ function Dashboard() {
                             </span>
                         </div>
                         <div className="lg:mt-10 w-full">
-                            {users.map(user => (
-                                <div className="mt-5 flex w-full" key={`user-${user.id}`}>
-                                    <div className='w-full flex flex-col'>
 
-                                        <div className='w-full flex flex-col my-2'>
-                                            <label className='text-2xl font-semibold my-2' htmlFor={`Uname-${user.id}`}>Name</label>
-                                            <input
-                                                type="text"
-                                                name="name"
-                                                id={`Uname-${user.id}`}
-                                                value={user.name}
-                                                onChange={(e) => UhandleChange(e, user.id)}
-                                                placeholder="Your Name"
-                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
-                                            />
-                                        </div>
+                            <div className="mt-5 flex w-full" key={`user-${users.id}`}>
+                                <div className='w-full flex flex-col'>
 
-                                        <div className='w-full flex flex-col my-2'>
-                                            <label className='text-2xl font-semibold my-2' htmlFor={`Uphoto-${user.id}`}>Photo</label>
-                                            <input
-                                                type="text"
-                                                name="photo"
-                                                id={`Uphoto-${user.id}`}
-                                                value={user.photo}
-                                                onChange={(e) => UhandleChange(e, user.id)}
-                                                placeholder=""
-                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
-                                            />
-                                        </div>
+                                    <div className='w-full flex flex-col my-2'>
+                                        <label className='text-2xl font-semibold my-2' htmlFor={`Uname-${users.id}`}>Name</label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            id={`Uname-${users.id}`}
+                                            value={users.name}
+                                            onChange={(e) => UhandleChange(e, users.id)}
+                                            placeholder="Your Name"
+                                            className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                        />
+                                    </div>
 
-                                        <div className='w-full flex flex-col my-2'>
-                                            <label className='text-2xl font-semibold my-2' htmlFor={`Uresume-${user.id}`}>Resume Link</label>
-                                            <input
-                                                type="text"
-                                                name="resume"
-                                                id={`Uresume-${user.id}`}
-                                                value={user.resume}
-                                                onChange={(e) => UhandleChange(e, user.id)}
-                                                placeholder="Resume Link"
-                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
-                                            />
-                                        </div>
+                                    <div className='w-full flex flex-col my-2'>
+                                        <label className='text-2xl font-semibold my-2' htmlFor={`Uphoto-${users.id}`}>Photo</label>
+                                        <input
+                                            type="text"
+                                            name="photo"
+                                            id={`Uphoto-${users.id}`}
+                                            value={users.photo}
+                                            onChange={(e) => UhandleChange(e, users.id)}
+                                            placeholder=""
+                                            className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                        />
+                                    </div>
 
-                                        <div className='w-full flex flex-col my-2'>
-                                            <label className='text-2xl font-semibold my-2' htmlFor={`Ugithub-${user.id}`}>Github Link</label>
-                                            <input
-                                                type="text"
-                                                name="github"
-                                                id={`Ugithub-${user.id}`}
-                                                value={user.github}
-                                                onChange={(e) => UhandleChange(e, user.id)}
-                                                placeholder="Your GitHub Link"
-                                                className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
-                                            />
-                                        </div>
+                                    <div className='w-full flex flex-col my-2'>
+                                        <label className='text-2xl font-semibold my-2' htmlFor={`Uresume-${users.id}`}>Resume Link</label>
+                                        <input
+                                            type="text"
+                                            name="resume"
+                                            id={`Uresume-${users.id}`}
+                                            value={users.resume}
+                                            onChange={(e) => UhandleChange(e, users.id)}
+                                            placeholder="Resume Link"
+                                            className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                        />
+                                    </div>
 
+                                    <div className='w-full flex flex-col my-2'>
+                                        <label className='text-2xl font-semibold my-2' htmlFor={`Ugithub-${users.id}`}>Github Link</label>
+                                        <input
+                                            type="text"
+                                            name="github"
+                                            id={`Ugithub-${users.id}`}
+                                            value={users.github}
+                                            onChange={(e) => UhandleChange(e, users.id)}
+                                            placeholder="Your GitHub Link"
+                                            className="h-14 lg:h-16 w-full border border-white rounded-xl pl-2 text-lg shadow-xl"
+                                        />
                                     </div>
 
                                 </div>
-                            ))}
+
+                            </div>
+
                         </div>
                     </div>
 
                     {/* Skills */}
-                    <div className="border-4 border-white rounded-xl bg-gray-100 transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
+                    <div className="border-4 border-white rounded-xl bg-yellow-100 transparent-yellow mt-10 px-2 lg:pl-5 drop-shadow-xl shadow-xl">
                         <div className='flex justify-center'>
                             <span className="bg-white w-fit h-fit p-2 flex justify-center items-center mt-5 rounded-xl">
                                 <p className="text-lg font-bold lg:text-2xl">Skills</p>
@@ -507,7 +574,7 @@ function Dashboard() {
                         </div>
                         <div className="lg:mt-10 w-full">
                             {skills.map((skill, skillIndex) => (
-                                <div className="mt-5 flex w-full bg-slate-200 rounded-xl p-2" key={`skill-${skill.id}`}>
+                                <div className="mt-5 flex w-full bg-red-300 rounded-xl p-2" key={`skill-${skill.id}`}>{`skill-${skill.id}`}
                                     <div className='w-full flex flex-col'>
                                         <div className='flex flex-col my-3 w-full'>
                                             <label className='lg:text-2xl text-lg font-semibold lg:mb-3 mb-1'>Category</label>
@@ -560,7 +627,7 @@ function Dashboard() {
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                                    </svg> 
+                                                    </svg>
                                                 </button> {/* remove */}
                                             </div>
                                         ))}
@@ -572,7 +639,7 @@ function Dashboard() {
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                                </svg> 
+                                                </svg>
                                             </button>{/* add */}
                                             <p className="ml-4 md:text-xl md:font-semibold lg:text-xl">Add another Name</p>
                                         </div>
@@ -586,7 +653,7 @@ function Dashboard() {
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                        </svg> 
+                                        </svg>
                                     </button>{/* remove */}
                                 </div>
                             ))}
@@ -700,7 +767,7 @@ function Dashboard() {
 
                                         <div className='w-full flex flex-col my-2'>
                                             <label className='text-2xl font-semibold my-2' htmlFor={`experience-skills-${experience.id}`}>Skills Used</label>
-                                            
+
                                             {experience.skills.map((skill) => (
                                                 <div key={`experience-skills-${skill.id}`} className='flex items-center my-2'>
                                                     <input

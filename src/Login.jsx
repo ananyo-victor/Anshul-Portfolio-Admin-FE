@@ -1,23 +1,71 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Await, useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [_id, set_id] = useState('');
+
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('https://anshul-portfolio-admin-be.onrender.com/auth/login', {
+            // const response = await axios.post('https://anshul-portfolio-admin-be.onrender.com/auth/login', {
+            //     email: username,
+            //     password: password,
+            // });
+            const response = await axios.post('http://localhost:3002/auth/login', {
                 email: username,
                 password: password,
             });
             localStorage.setItem('auth-token', response.data.token);
-            // alert('Login successful!');
             navigate('/dashboard'); // Redirect to the Dashboard page
+            try {
+                const response_get = await axios.get('http://localhost:3002/portfolio/receive');
+                const data = response_get.data;
+                // console.log("below is the data");
+                const temp_id = data[data.length - 1]._id
+
+                // console.log(temp_id);
+
+                if (temp_id) {
+                    try {
+                        // console.log("it is also here");
+                        set_id(temp_id);
+                    } catch (error) {
+                        // console.log("not getting data");
+                    }
+                    // console.log(_id);
+
+                }
+
+            } catch (error) {
+                console.error('Blank document', error);
+                await axios.post('http://localhost:3002/portfolio/create-dummy', {
+                    users: {
+                        id: "1",
+                        name: "",
+                        resume: "",
+                        github: "",
+                        photo: ""
+                    },
+                    projects: [],
+                    experiences: [],
+                    educations: [],
+                    skills: [],
+                }, {
+                    headers: {
+                        'auth-token': response.data.token,
+                    }
+                });
+
+            }
+
+            // alert('Login successful!');
+
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 setError(error.response.data.message);
